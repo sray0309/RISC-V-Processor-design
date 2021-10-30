@@ -49,8 +49,8 @@ if_stage If_stage(
   .target_PC(64'h0),
   
   .inst_addr(inst_addr),
-  .inst_ena(inst_ena)
-  // .if_packet_out(if2id_packet)
+  .inst_ena(inst_ena),
+  .if_packet_out(if2id_packet)
 );
 
 id_stage Id_stage(
