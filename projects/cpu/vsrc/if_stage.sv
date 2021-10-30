@@ -16,22 +16,17 @@ module if_stage(
   
 );
 
-logic [63 : 0] pc;
+logic [63 : 0] PC, NPC;
 
 // fetch an instruction
 always_ff @( posedge clk )
 begin
-  if( rst == 1'b1 )
-  begin
-    pc <= `ZERO_WORD ;
-  end
-  else
-  begin
-    pc <= pc + 4;
-  end
+  if( rst == 1'b1 ) PC <= `ZERO_WORD ;
+  else PC <= NPC;
 end
 
-assign inst_addr = pc;
+assign NPC = PC + 4;
+assign inst_addr = PC;
 assign inst_ena  = ( rst == 1'b1 ) ? 0 : 1;
 
 
