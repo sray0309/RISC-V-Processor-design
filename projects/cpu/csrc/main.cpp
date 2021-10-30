@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 	  if( main_time % 10 == 0 ) top->clk = 0;
 	  if( main_time % 10 == 5 ) {
 		  top->clk = 1;
-		  printf("write data %0ld\n", top->inst_addr);
+		  printf("write data %0ld\n", top->rd_data);
 		}
 		  
 	  if( main_time < 10 )
