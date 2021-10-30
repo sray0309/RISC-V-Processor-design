@@ -62,7 +62,7 @@ int main(int argc, char **argv)
 	  if( main_time % 10 == 0 ) top->clk = 0;
 	  if( main_time % 10 == 5 ) {
 		  top->clk = 1;
-		  printf("inst addr is %0x", top->inst_addr);
+		  printf("inst addr is %0x\n", top->inst_addr);
 		}
 		  
 	  if( main_time < 10 )
