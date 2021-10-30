@@ -7,17 +7,7 @@ module id_stage(
   input clk,
   input rst,
   input IF_ID_PACKET if_packet_out,
-  // input [`DATA_WIDTH - 1 : 0] rs1_data,
-  // input [`DATA_WIDTH - 1 : 0] rs2_data,
   input [`DATA_WIDTH - 1 : 0] rd_data,
-  
-  
-  // output logic rs1_r_ena,
-  // output logic [              4 : 0] rs1_r_addr,
-  // output logic                       rs2_r_ena,
-  // output logic [              4 : 0] rs2_r_addr,
-  // output logic                       rd_w_ena,
-  // output logic [              4 : 0] rd_w_addr,
   
   output logic [              4 : 0] inst_type,
   output logic [              7 : 0] inst_opcode,
