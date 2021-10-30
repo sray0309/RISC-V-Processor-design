@@ -55,7 +55,7 @@ if_stage If_stage(
 
 id_stage Id_stage(
   .rst(rst),
-  .inst(inst),
+  .if_packet_out(if2id_packet),
   .rs1_data(r_data1),
   .rs2_data(r_data2),
   

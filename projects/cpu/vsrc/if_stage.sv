@@ -11,8 +11,8 @@ module if_stage(
   input [     63 : 0 ] target_PC,
   
   output logic [63 : 0] inst_addr,
-  output logic         inst_ena,
-  output IF_ID_PACKET if_packet_out
+  output logic          inst_ena,
+  output IF_ID_PACKET   if_packet_out
   
 );
 

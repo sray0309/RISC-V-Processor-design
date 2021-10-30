@@ -5,7 +5,7 @@
 
 module id_stage(
   input rst,
-  input [31:0]          inst,
+  input IF_ID_PACKET if_packet_out,
   input [`DATA_WIDTH - 1 : 0] rs1_data,
   input [`DATA_WIDTH - 1 : 0] rs2_data,
   
@@ -23,8 +23,8 @@ module id_stage(
   output logic [`DATA_WIDTH - 1 : 0] op2
 );
 
-// logic [31:0] inst;
-// assign inst = if_packet_out.inst;
+logic [31:0] inst;
+assign inst = if_packet_out.inst;
 // I-type
 logic [6  : 0]opcode;
 logic [4  : 0]rd;
