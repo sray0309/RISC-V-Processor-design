@@ -1,7 +1,7 @@
 
 //--xuezhen--
 
-`include "defines.sv"
+`include "sys_defs.svh"
 
 module exe_stage(
   input                       rst,

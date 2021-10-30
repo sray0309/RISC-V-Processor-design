@@ -1,7 +1,7 @@
 
 //--xuezhen--
 
-`include "defines.sv"
+`include "sys_defs.svh"
 
 module if_stage(
   input clk,

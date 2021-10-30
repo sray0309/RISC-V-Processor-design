@@ -1,5 +1,5 @@
 
-`include "defines.sv"
+`include "sys_defs.svh"
 
 module regfile(
     input 	clk,

@@ -3,7 +3,7 @@
 
 `timescale 1ns / 1ps
 
-`include "defines.sv"
+`include "sys_defs.svh"
 
 
 module rvcpu(
