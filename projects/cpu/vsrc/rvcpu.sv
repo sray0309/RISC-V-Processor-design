@@ -15,7 +15,7 @@ module rvcpu(
   output logic           inst_ena
 );
 
-
+IF_ID_PACKET if2id_packet;
 // id_stage
 // id_stage -> regfile
 logic rs1_r_ena;
@@ -43,9 +43,13 @@ logic [`DATA_WIDTH  - 1 : 0 ]rd_data;
 if_stage If_stage(
   .clk(clk),
   .rst(rst),
+  .inst(inst),
+  .stall(1'b0),
+  .target_PC(64'h0),
   
   .inst_addr(inst_addr),
-  .inst_ena(inst_ena)
+  .inst_ena(inst_ena),
+  .if_packet_out(if2id_packet)
 );
 
 id_stage Id_stage(

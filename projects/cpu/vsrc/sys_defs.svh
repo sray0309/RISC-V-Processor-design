@@ -152,16 +152,16 @@ typedef union packed {
 typedef struct packed {
 	logic valid; // If low, the data in this struct is garbage
     INST  inst;  // fetched instruction out
-	logic [`XLEN-1:0] NPC; // PC + 4
-	logic [`XLEN-1:0] PC;  // PC 
+	logic [63:0] NPC; // PC + 4
+	logic [63:0] PC;  // PC 
 } IF_ID_PACKET;
 
 typedef struct packed {
-	logic [`XLEN-1:0] NPC;   // PC + 4
-	logic [`XLEN-1:0] PC;    // PC
+	logic [63:0] NPC;   // PC + 4
+	logic [63:0] PC;    // PC
 
-	logic [`XLEN-1:0] rs1_value;    // reg A value                                  
-	logic [`XLEN-1:0] rs2_value;    // reg B value                                  
+	logic [`DATA_WIDTH - 1:0] rs1_value;    // reg A value                                  
+	logic [`DATA_WIDTH - 1:0] rs2_value;    // reg B value                                  
 	                                                                                
 	ALU_OPA_SELECT opa_select; // ALU opa mux select (ALU_OPA_xxx *)
 	ALU_OPB_SELECT opb_select; // ALU opb mux select (ALU_OPB_xxx *)
@@ -181,11 +181,11 @@ typedef struct packed {
 } ID_EX_PACKET;
 
 typedef struct packed {
-	logic [`XLEN-1:0] alu_result; // alu_result
-	logic [`XLEN-1:0] NPC; //pc + 4
+	logic [`DATA_WIDTH-1:0] alu_result; // alu_result
+	logic [63:0] NPC; //pc + 4
 	logic             take_branch; // is this a taken branch?
 	//pass throughs from decode stage
-	logic [`XLEN-1:0] rs2_value;
+	logic [`DATA_WIDTH-1:0] rs2_value;
 	logic             rd_mem, wr_mem;
 	logic [4:0]       dest_reg_idx;
 	logic             halt, illegal, csr_op, valid;
