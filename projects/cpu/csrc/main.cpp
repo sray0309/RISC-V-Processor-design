@@ -60,7 +60,10 @@ int main(int argc, char **argv)
 	while( !Verilated::gotFinish() && main_time < sim_time )
 	{
 	  if( main_time % 10 == 0 ) top->clk = 0;
-	  if( main_time % 10 == 5 ) top->clk = 1;
+	  if( main_time % 10 == 5 ) {
+		  top->clk = 1;
+		  printf("inst addr is %0x", top->inst_addr);
+		}
 		  
 	  if( main_time < 10 )
 	  {
