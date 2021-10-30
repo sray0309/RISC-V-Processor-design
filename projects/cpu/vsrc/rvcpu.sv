@@ -12,7 +12,8 @@ module rvcpu(
   input  [31 : 0]  inst,
   
   output logic [63 : 0]  inst_addr, 
-  output logic           inst_ena
+  output logic           inst_ena,
+  output logic [63 : 0]  rd_data
 );
 
 IF_ID_PACKET if2id_packet;
@@ -38,7 +39,7 @@ logic [`DATA_WIDTH  - 1 : 0] r_data2;
 // exe_stage -> other stage
 logic [4 : 0]inst_type_o;
 // exe_stage -> regfile
-logic [`DATA_WIDTH  - 1 : 0 ]rd_data;
+// logic [`DATA_WIDTH  - 1 : 0 ]rd_data;
 
 if_stage If_stage(
   .clk(clk),
