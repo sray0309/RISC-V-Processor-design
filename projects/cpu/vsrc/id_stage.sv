@@ -4,23 +4,50 @@
 `include "sys_defs.svh"
 
 module id_stage(
+  input clk,
   input rst,
   input IF_ID_PACKET if_packet_out,
-  input [`DATA_WIDTH - 1 : 0] rs1_data,
-  input [`DATA_WIDTH - 1 : 0] rs2_data,
+  // input [`DATA_WIDTH - 1 : 0] rs1_data,
+  // input [`DATA_WIDTH - 1 : 0] rs2_data,
+  input [`DATA_WIDTH - 1 : 0] rd_data,
   
   
-  output logic rs1_r_ena,
-  output logic [              4 : 0] rs1_r_addr,
-  output logic                       rs2_r_ena,
-  output logic [              4 : 0] rs2_r_addr,
-  output logic                       rd_w_ena,
-  output logic [              4 : 0] rd_w_addr,
+  // output logic rs1_r_ena,
+  // output logic [              4 : 0] rs1_r_addr,
+  // output logic                       rs2_r_ena,
+  // output logic [              4 : 0] rs2_r_addr,
+  // output logic                       rd_w_ena,
+  // output logic [              4 : 0] rd_w_addr,
   
   output logic [              4 : 0] inst_type,
   output logic [              7 : 0] inst_opcode,
   output logic [`DATA_WIDTH - 1 : 0] op1,
   output logic [`DATA_WIDTH - 1 : 0] op2
+);
+
+logic [`DATA_WIDTH - 1 : 0] rs1_data;
+logic [`DATA_WIDTH - 1 : 0] rs2_data;
+
+logic                       rs1_r_ena;
+logic [              4 : 0] rs1_r_addr;
+logic                       rs2_r_ena;
+logic [              4 : 0] rs2_r_addr;
+logic                       rd_w_ena;
+logic [              4 : 0] rd_w_addr;
+
+regfile Regfile(
+  .clk(clk),
+  .rst(rst),
+  .w_addr(rd_w_addr),
+  .w_data(rd_data),
+  .w_ena(rd_w_ena),
+  
+  .r_addr1(rs1_r_addr),
+  .r_data1(rs1_data),
+  .r_ena1(rs1_r_ena),
+  .r_addr2(rs2_r_addr),
+  .r_data2(rs2_data),
+  .r_ena2(rs2_r_ena)
 );
 
 logic [31:0] inst;

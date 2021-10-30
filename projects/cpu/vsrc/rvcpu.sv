@@ -54,17 +54,19 @@ if_stage If_stage(
 );
 
 id_stage Id_stage(
+  .clk(clk),
   .rst(rst),
   .if_packet_out(if2id_packet),
-  .rs1_data(r_data1),
-  .rs2_data(r_data2),
+  // .rs1_data(r_data1),
+  // .rs2_data(r_data2),
+  .rd_data(rd_data),
   
-  .rs1_r_ena(rs1_r_ena),
-  .rs1_r_addr(rs1_r_addr),
-  .rs2_r_ena(rs2_r_ena),
-  .rs2_r_addr(rs2_r_addr),
-  .rd_w_ena(rd_w_ena),
-  .rd_w_addr(rd_w_addr),
+  // .rs1_r_ena(rs1_r_ena),
+  // .rs1_r_addr(rs1_r_addr),
+  // .rs2_r_ena(rs2_r_ena),
+  // .rs2_r_addr(rs2_r_addr),
+  // .rd_w_ena(rd_w_ena),
+  // .rd_w_addr(rd_w_addr),
   .inst_type(inst_type),
   .inst_opcode(inst_opcode),
   .op1(op1),
@@ -82,19 +84,19 @@ exe_stage Exe_stage(
   .rd_data(rd_data)
 );
 
-regfile Regfile(
-  .clk(clk),
-  .rst(rst),
-  .w_addr(rd_w_addr),
-  .w_data(rd_data),
-  .w_ena(rd_w_ena),
+// regfile Regfile(
+//   .clk(clk),
+//   .rst(rst),
+//   .w_addr(rd_w_addr),
+//   .w_data(rd_data),
+//   .w_ena(rd_w_ena),
   
-  .r_addr1(rs1_r_addr),
-  .r_data1(r_data1),
-  .r_ena1(rs1_r_ena),
-  .r_addr2(rs2_r_addr),
-  .r_data2(r_data2),
-  .r_ena2(rs2_r_ena)
-);
+//   .r_addr1(rs1_r_addr),
+//   .r_data1(r_data1),
+//   .r_ena1(rs1_r_ena),
+//   .r_addr2(rs2_r_addr),
+//   .r_data2(r_data2),
+//   .r_ena2(rs2_r_ena)
+// );
 
 endmodule
