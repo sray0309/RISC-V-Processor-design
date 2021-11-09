@@ -57,9 +57,9 @@ id_stage Id_stage(
   .rst(rst),
   .if_packet_in(if2id_packet),
   
-  .wb_reg_write_en(ex2mem_packet.wr_mem),
+  .wb_reg_write_en(ex2mem_packet.dest_reg_addr != `ZERO_REG),
   .wb_reg_write_addr(ex2mem_packet.dest_reg_addr),
-  .wb_reg_write_data(ex2mem_packet.rs2_value),
+  .wb_reg_write_data(ex2mem_packet.alu_result),
 
   .id_packet_out(id2ex_packet)
 );
