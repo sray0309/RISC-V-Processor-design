@@ -38,7 +38,7 @@ logic [`DATA_WIDTH  - 1 : 0] r_data1;
 logic [`DATA_WIDTH  - 1 : 0] r_data2;
 
 // exe_stage -> regfile
-// logic [`DATA_WIDTH  - 1 : 0 ]rd_data;
+assign rd_data = ex2mem_packet.alu_result;
 
 if_stage If_stage(
   .clk(clk),
