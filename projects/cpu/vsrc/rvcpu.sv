@@ -30,7 +30,7 @@ logic [4 : 0]rd_w_addr;
 // id_stage -> exe_stage
 logic [4 : 0]inst_type;
 logic [7 : 0]inst_opcode;
-logic [`DATA_WIDTH  - 1 : 0] op1;
+logic [`DATA_WIDTH  - 1 : 0]  op1;
 logic [`DATA_WIDTH  - 1 : 0] op2;
 
 // regfile -> id_stage
