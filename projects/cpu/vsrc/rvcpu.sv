@@ -35,9 +35,6 @@ logic [`DATA_WIDTH  - 1 : 0] op2;
 logic [`DATA_WIDTH  - 1 : 0] r_data1;
 logic [`DATA_WIDTH  - 1 : 0] r_data2;
 
-// exe_stage
-// exe_stage -> other stage
-logic [4 : 0]inst_type_o;
 // exe_stage -> regfile
 // logic [`DATA_WIDTH  - 1 : 0 ]rd_data;
 
@@ -59,7 +56,6 @@ id_stage Id_stage(
   .if_packet_out(if2id_packet),
   .rd_data(rd_data),
   
-  .inst_type(inst_type),
   .inst_opcode(inst_opcode),
   .op1(op1),
   .op2(op2)
@@ -67,12 +63,10 @@ id_stage Id_stage(
 
 exe_stage Exe_stage(
   .rst(rst),
-  .inst_type_i(inst_type),
   .inst_opcode(inst_opcode),
   .op1(op1),
   .op2(op2),
   
-  .inst_type_o(inst_type_o),
   .rd_data(rd_data)
 );
 

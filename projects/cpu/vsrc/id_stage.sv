@@ -71,7 +71,6 @@ module id_stage(
   input IF_ID_PACKET if_packet_out,
   input [`DATA_WIDTH - 1 : 0] rd_data,
   
-  output logic [              4 : 0] inst_type,
   output logic [              7 : 0] inst_opcode,
   output logic [`DATA_WIDTH - 1 : 0] op1,
   output logic [`DATA_WIDTH - 1 : 0] op2
@@ -121,7 +120,6 @@ wire inst_addi =   ~opcode[2] & ~opcode[3] & opcode[4] & ~opcode[5] & ~opcode[6]
 
 // arith inst: 10000; logic: 01000;
 // load-store: 00100; j: 00010;  sys: 000001
-assign inst_type[4] = ( rst == 1'b1 ) ? 0 : inst_addi;
 
 assign inst_opcode[0] = (  rst == 1'b1 ) ? 0 : inst_addi;
 assign inst_opcode[1] = (  rst == 1'b1 ) ? 0 : 0;
@@ -135,16 +133,16 @@ assign inst_opcode[7] = (  rst == 1'b1 ) ? 0 : 0;
 
 
 
-assign rs1_r_ena  = ( rst == 1'b1 ) ? 0 : inst_type[4];
-assign rs1_r_addr = ( rst == 1'b1 ) ? 0 : ( inst_type[4] == 1'b1 ? rs1 : 0 );
+assign rs1_r_ena  = ( rst == 1'b1 ) ? 0 : inst_addi;
+assign rs1_r_addr = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rs1 : 0 );
 assign rs2_r_ena  = 0;
 assign rs2_r_addr = 0;
 
-assign rd_w_ena   = ( rst == 1'b1 ) ? 0 : inst_type[4];
-assign rd_w_addr  = ( rst == 1'b1 ) ? 0 : ( inst_type[4] == 1'b1 ? rd  : 0 );
+assign rd_w_ena   = ( rst == 1'b1 ) ? 0 : inst_addi;
+assign rd_w_addr  = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rd  : 0 );
 
-assign op1 = ( rst == 1'b1 ) ? 0 : ( inst_type[4] == 1'b1 ? rs1_data : 0 );
-assign op2 = ( rst == 1'b1 ) ? 0 : ( inst_type[4] == 1'b1 ? { {52{imm[11]}}, imm } : 0 );
+assign op1 = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rs1_data : 0 );
+assign op2 = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? { {52{imm[11]}}, imm } : 0 );
 
 
 endmodule
