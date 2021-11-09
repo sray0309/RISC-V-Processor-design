@@ -200,11 +200,11 @@
 `define RV64_AMOMAXU_D  `RV32_Rtype(`RV32_AMO, 3'b011, 7'b11100??)
 
 // RV32 Immediate signed/unsigned(U is technically unsigned) extension macros
-`define RV32_signext_Iimm(instr) {{21{``instr``[31]}},``instr``[30:20]}
-`define RV32_signext_Simm(instr) {{21{``instr``[31]}},``instr[30:25],``instr``[11:7]}
-`define RV32_signext_Bimm(instr) {{20{``instr``[31]}},``instr``[7],``instr``[30:25],``instr``[11:8], {1'b0}}
-`define RV32_signext_Uimm(instr) {``instr``[31:12], {12{1'b0}}}
-`define RV32_signext_Jimm(instr) {{12{``instr``[31]}},``instr``[19:12],``instr``[20],``instr``[30:21], {1'b0}} 
+`define RV64_signext_Iimm(instr) {{53{``instr``[31]}},``instr``[30:20]}
+`define RV64_signext_Simm(instr) {{53{``instr``[31]}},``instr[30:25],``instr``[11:7]}
+`define RV64_signext_Bimm(instr) {{52{``instr``[31]}},``instr``[7],``instr``[30:25],``instr``[11:8], {1'b0}}
+`define RV64_signext_Uimm(instr) {{32{1'b0}}, ``instr``[31:12], {12{1'b0}}}
+`define RV64_signext_Jimm(instr) {{44{``instr``[31]}},``instr``[19:12],``instr``[20],``instr``[30:21], {1'b0}} 
 
 // RV32 12bit Immediate injection/extraction, replace the Imm content with specified value
 // for injection, input immediate value index starting from 1

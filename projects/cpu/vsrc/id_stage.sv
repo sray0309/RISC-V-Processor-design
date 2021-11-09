@@ -66,83 +66,143 @@ module decoder(
 endmodule
 
 module id_stage(
-  input clk,
-  input rst,
-  input IF_ID_PACKET if_packet_out,
-  input [`DATA_WIDTH - 1 : 0] rd_data,
-  
-  output logic [              7 : 0] inst_opcode,
-  output logic [`DATA_WIDTH - 1 : 0] op1,
-  output logic [`DATA_WIDTH - 1 : 0] op2
+	input clk, rst,
+	// write back stage write register
+	input wb_reg_write_en,
+	input [4:0] wb_reg_write_addr,
+	input [`DATA_WIDTH-1 : 0] wb_reg_write_data,
+
+	IF_ID_PACKET if_packet_in,
+
+	// handle hazards
+
+	output ID_EX_PACKET id_packet_out
 );
+	DEST_REG_SEL   dest_reg_select;
 
-logic [`DATA_WIDTH - 1 : 0] rs1_data;
-logic [`DATA_WIDTH - 1 : 0] rs2_data;
+	decoder decoder(
+		.if_packet(if_packet_in),
+		.opa_select(id_packet_out.opa_select),
+		.opb_select(id_packet_out.opb_select),
+		.dest_reg(dest_reg_select),
+		.alu_func(id_packet_out.alu_func),
+		.rd_mem(id_packet_out.rd_mem),
+		.wr_mem(id_packet_out.wr_mem),
+		.cond_branch(id_packet_out.cond_branch),
+		.uncond_branch(id_packet_out.uncond_branch),
+		.csr_op(id_packet_out.csr_op),
+		.halt(id_packet_out.halt),
+		.illegal(id_packet_out.illegal),
+		.valid_inst(id_packet_out.valid)
+	);
 
-logic                       rs1_r_ena;
-logic [              4 : 0] rs1_r_addr;
-logic                       rs2_r_ena;
-logic [              4 : 0] rs2_r_addr;
-logic                       rd_w_ena;
-logic [              4 : 0] rd_w_addr;
+	always_comb begin
+		case (dest_reg_select)
+			DEST_RD:    id_packet_out.dest_reg_addr = if_packet_in.inst.r.rd;
+			DEST_NONE:  id_packet_out.dest_reg_addr = `ZERO_REG;
+			default:    id_packet_out.dest_reg_addr = `ZERO_REG; 
+		endcase
+	end
 
-regfile Regfile(
-  .clk(clk),
-  .rst(rst),
-  .w_addr(rd_w_addr),
-  .w_data(rd_data),
-  .w_ena(rd_w_ena),
-  
-  .r_addr1(rs1_r_addr),
-  .r_data1(rs1_data),
-  .r_ena1(rs1_r_ena),
-  .r_addr2(rs2_r_addr),
-  .r_data2(rs2_data),
-  .r_ena2(rs2_r_ena)
-);
+	assign id_packet_out.NPC = if_packet_in.NPC;
+	assign id_packet_out.PC = if_packet_in.PC;
+	assign id_packet_out.inst = if_packet_in.inst;
 
-logic [31:0] inst;
-assign inst = if_packet_out.inst;
-// I-type
-logic [6  : 0]opcode;
-logic [4  : 0]rd;
-logic [2  : 0]func3;
-logic [4  : 0]rs1;
-logic [11 : 0]imm;
-assign opcode = inst[6  :  0];
-assign rd     = inst[11 :  7];
-assign func3  = inst[14 : 12];
-assign rs1    = inst[19 : 15];
-assign imm    = inst[31 : 20];
+	regfile Regfile(
+		.clk(clk),
+		.rst(rst),
+		.w_addr(wb_reg_write_addr),
+		.w_data(wb_reg_write_data),
+		.w_ena(wb_reg_write_en),
 
-wire inst_addi =   ~opcode[2] & ~opcode[3] & opcode[4] & ~opcode[5] & ~opcode[6]
-                 & ~func3[0] & ~func3[1] & ~func3[2];
-
-// arith inst: 10000; logic: 01000;
-// load-store: 00100; j: 00010;  sys: 000001
-
-assign inst_opcode[0] = (  rst == 1'b1 ) ? 0 : inst_addi;
-assign inst_opcode[1] = (  rst == 1'b1 ) ? 0 : 0;
-assign inst_opcode[2] = (  rst == 1'b1 ) ? 0 : 0;
-assign inst_opcode[3] = (  rst == 1'b1 ) ? 0 : 0;
-assign inst_opcode[4] = (  rst == 1'b1 ) ? 0 : inst_addi;
-assign inst_opcode[5] = (  rst == 1'b1 ) ? 0 : 0;
-assign inst_opcode[6] = (  rst == 1'b1 ) ? 0 : 0;
-assign inst_opcode[7] = (  rst == 1'b1 ) ? 0 : 0;
-
-
-
-
-assign rs1_r_ena  = ( rst == 1'b1 ) ? 0 : inst_addi;
-assign rs1_r_addr = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rs1 : 0 );
-assign rs2_r_ena  = 0;
-assign rs2_r_addr = 0;
-
-assign rd_w_ena   = ( rst == 1'b1 ) ? 0 : inst_addi;
-assign rd_w_addr  = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rd  : 0 );
-
-assign op1 = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rs1_data : 0 );
-assign op2 = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? { {52{imm[11]}}, imm } : 0 );
-
+		.r_addr1(if_packet_in.inst.r.rs1),
+		.r_data1(id_packet_out.rs1_value),
+		.r_ena1(1'b1),
+		.r_addr2(if_packet_in.inst.r.rs2),
+		.r_data2(id_packet_out.rs2_value),
+		.r_ena2(1'b1)
+	);
 
 endmodule
+
+// module id_stage(
+//   input clk,
+//   input rst,
+//   input IF_ID_PACKET if_packet_out,
+//   input [`DATA_WIDTH - 1 : 0] rd_data,
+  
+//   output logic [              7 : 0] inst_opcode,
+//   output logic [`DATA_WIDTH - 1 : 0] op1,
+//   output logic [`DATA_WIDTH - 1 : 0] op2
+// );
+
+// logic [`DATA_WIDTH - 1 : 0] rs1_data;
+// logic [`DATA_WIDTH - 1 : 0] rs2_data;
+
+// logic                       rs1_r_ena;
+// logic [              4 : 0] rs1_r_addr;
+// logic                       rs2_r_ena;
+// logic [              4 : 0] rs2_r_addr;
+// logic                       rd_w_ena;
+// logic [              4 : 0] rd_w_addr;
+
+// regfile Regfile(
+//   .clk(clk),
+//   .rst(rst),
+//   .w_addr(rd_w_addr),
+//   .w_data(rd_data),
+//   .w_ena(rd_w_ena),
+  
+//   .r_addr1(rs1_r_addr),
+//   .r_data1(rs1_data),
+//   .r_ena1(rs1_r_ena),
+//   .r_addr2(rs2_r_addr),
+//   .r_data2(rs2_data),
+//   .r_ena2(rs2_r_ena)
+// );
+
+// logic [31:0] inst;
+// assign inst = if_packet_out.inst;
+// // I-type
+// logic [6  : 0]opcode;
+// logic [4  : 0]rd;
+// logic [2  : 0]func3;
+// logic [4  : 0]rs1;
+// logic [11 : 0]imm;
+// assign opcode = inst[6  :  0];
+// assign rd     = inst[11 :  7];
+// assign func3  = inst[14 : 12];
+// assign rs1    = inst[19 : 15];
+// assign imm    = inst[31 : 20];
+
+// wire inst_addi =   ~opcode[2] & ~opcode[3] & opcode[4] & ~opcode[5] & ~opcode[6]
+//                  & ~func3[0] & ~func3[1] & ~func3[2];
+
+// // arith inst: 10000; logic: 01000;
+// // load-store: 00100; j: 00010;  sys: 000001
+
+// assign inst_opcode[0] = (  rst == 1'b1 ) ? 0 : inst_addi;
+// assign inst_opcode[1] = (  rst == 1'b1 ) ? 0 : 0;
+// assign inst_opcode[2] = (  rst == 1'b1 ) ? 0 : 0;
+// assign inst_opcode[3] = (  rst == 1'b1 ) ? 0 : 0;
+// assign inst_opcode[4] = (  rst == 1'b1 ) ? 0 : inst_addi;
+// assign inst_opcode[5] = (  rst == 1'b1 ) ? 0 : 0;
+// assign inst_opcode[6] = (  rst == 1'b1 ) ? 0 : 0;
+// assign inst_opcode[7] = (  rst == 1'b1 ) ? 0 : 0;
+
+
+
+
+// assign rs1_r_ena  = ( rst == 1'b1 ) ? 0 : inst_addi;
+// assign rs1_r_addr = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rs1 : 0 );
+// assign rs2_r_ena  = 0;
+// assign rs2_r_addr = 0;
+
+// assign rd_w_ena   = ( rst == 1'b1 ) ? 0 : inst_addi;
+// assign rd_w_addr  = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rd  : 0 );
+
+// assign op1 = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? rs1_data : 0 );
+// assign op2 = ( rst == 1'b1 ) ? 0 : ( inst_addi == 1'b1 ? { {52{imm[11]}}, imm } : 0 );
+
+
+// endmodule

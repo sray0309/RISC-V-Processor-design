@@ -17,6 +17,8 @@ module rvcpu(
 );
 
 IF_ID_PACKET if2id_packet;
+ID_EX_PACKET id2ex_packet;
+EX_MEM_PACKET ex2mem_packet;
 // id_stage
 // id_stage -> regfile
 logic rs1_r_ena;
@@ -53,36 +55,21 @@ if_stage If_stage(
 id_stage Id_stage(
   .clk(clk),
   .rst(rst),
-  .if_packet_out(if2id_packet),
-  .rd_data(rd_data),
+  .if_packet_in(if2id_packet),
   
-  .inst_opcode(inst_opcode),
-  .op1(op1),
-  .op2(op2)
+  .wb_reg_write_en(ex2mem_packet.wr_mem),
+  .wb_reg_write_addr(ex2mem_packet.dest_reg_addr),
+  .wb_reg_write_data(ex2mem_packet.rs2_value),
+
+  .id_packet_out(id2ex_packet)
 );
 
 exe_stage Exe_stage(
+  .clk(clk),
   .rst(rst),
-  .inst_opcode(inst_opcode),
-  .op1(op1),
-  .op2(op2),
-  
-  .rd_data(rd_data)
-);
+  .id_packet_in(id2ex_packet),
 
-// regfile Regfile(
-//   .clk(clk),
-//   .rst(rst),
-//   .w_addr(rd_w_addr),
-//   .w_data(rd_data),
-//   .w_ena(rd_w_ena),
-  
-//   .r_addr1(rs1_r_addr),
-//   .r_data1(r_data1),
-//   .r_ena1(rs1_r_ena),
-//   .r_addr2(rs2_r_addr),
-//   .r_data2(r_data2),
-//   .r_ena2(rs2_r_ena)
-// );
+  .ex_packet_out(ex2mem_packet)
+);
 
 endmodule

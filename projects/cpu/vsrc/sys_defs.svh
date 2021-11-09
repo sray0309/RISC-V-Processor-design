@@ -167,7 +167,7 @@ typedef struct packed {
 	ALU_OPB_SELECT opb_select; // ALU opb mux select (ALU_OPB_xxx *)
 	INST inst;                 // instruction
 	
-	logic [4:0] dest_reg_idx;  // destination (writeback) register index      
+	logic [4:0] dest_reg_addr;  // destination (writeback) register index      
 	ALU_FUNC    alu_func;      // ALU function select (ALU_xxx *)
 	logic       rd_mem;        // does inst read memory?
 	logic       wr_mem;        // does inst write memory?
@@ -177,7 +177,6 @@ typedef struct packed {
 	logic       illegal;       // is this instruction illegal?
 	logic       csr_op;        // is this a CSR operation? (we only used this as a cheap way to get return code)
 	logic       valid;         // is inst a valid instruction to be counted for CPI calculations?
-    logic       load_stall;
 } ID_EX_PACKET;
 
 typedef struct packed {
@@ -187,7 +186,7 @@ typedef struct packed {
 	//pass throughs from decode stage
 	logic [`DATA_WIDTH-1:0] rs2_value;
 	logic             rd_mem, wr_mem;
-	logic [4:0]       dest_reg_idx;
+	logic [4:0]       dest_reg_addr;
 	logic             halt, illegal, csr_op, valid;
 	logic [2:0]       mem_size; // byte, half-word or word
 } EX_MEM_PACKET;
